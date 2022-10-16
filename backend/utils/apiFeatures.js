@@ -38,6 +38,8 @@ class APIFeatures {
 
     if (multiSearchColumn) queryCopy = { ...queryCopy, ...multiSearchColumn };
 
+    console.log(multiSearchColumn);
+
     // Removing fields from the query
     const removeFields = ['keyword', 'limit', 'page', 'multiSearchColumn'];
     removeFields.forEach((el) => delete queryCopy[el]);
@@ -72,7 +74,6 @@ class APIFeatures {
       sortList[1] !== 'descending'
     )
       return this;
-    console.log('pass');
     const field = sortList[0];
     const sortDir = sortList[1];
     this.query = this.query.sort({ [field]: sortDir });

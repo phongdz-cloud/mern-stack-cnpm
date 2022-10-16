@@ -187,13 +187,13 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
 
   // Update avatar: TODO
 
-  await User.findByIdAndUpdate(req.user.id, newUserData, {
+  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
     new: true,
-    useFindAndModify: false,
   });
 
   res.status(200).json({
     success: true,
+    user,
   });
 });
 
@@ -208,6 +208,38 @@ exports.allUsers = catchAsyncErrors(async (req, res, next) => {
 exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id)
     .then((user) => res.json({ success: true, user }))
+    .catch((_) =>
+      next(
+        new ErrorHandler(`User does not found with id : ${req.params.id}`, 400)
+      )
+    );
+});
+
+// Update user profile => /api/v1/admin/user/:id
+exports.updateUser = catchAsyncErrors(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  const newUserData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+    new: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+// Delete user => /api/v1/admin/user/:id
+exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
+  await User.findByIdAndDelete(req.params.id)
+    .then((_) => res.json({ success: true }))
     .catch((_) =>
       next(
         new ErrorHandler(`User does not found with id : ${req.params.id}`, 400)

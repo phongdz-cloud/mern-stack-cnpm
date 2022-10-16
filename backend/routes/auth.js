@@ -12,6 +12,8 @@ const {
   updateProfile,
   allUsers,
   getUserDetails,
+  updateUser,
+  deleteUser,
 } = require('../controllers/authController');
 const {
   registerValidation,
@@ -19,6 +21,7 @@ const {
   forgotValidation,
   resetPasswordValidation,
   updateUserProfileValidation,
+  updateUserValidation,
 } = require('../middlewares/user');
 
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
@@ -353,6 +356,82 @@ router.get(
   isAuthenticatedUser,
   authorizeRoles('admin'),
   getUserDetails
+);
+/**
+ * @swagger
+ * /api/v1/admin/user/{id}:
+ *   put:
+ *     summary: Update user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              name:
+ *                  type: string
+ *              email:
+ *                  type: string
+ *              role:
+ *                  type: string
+ *             required:
+ *                 - name
+ *                 - email
+ *                 - role
+ *     responses:
+ *       200:
+ *         description: Update user success fully
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal Server Error
+ *
+ */
+router.put(
+  '/admin/user/:id',
+  isAuthenticatedUser,
+  authorizeRoles('admin'),
+  updateUserValidation(),
+  updateUser
+);
+
+/**
+ * @swagger
+ * /api/v1/admin/user/{id}:
+ *   delete:
+ *     summary: Delete user by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
+ *     responses:
+ *       200:
+ *         description: Delete user successfully
+ *         contents:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The user was not found
+ */
+router.delete(
+  '/admin/user/:id',
+  isAuthenticatedUser,
+  authorizeRoles('admin'),
+  deleteUser
 );
 
 module.exports = router;

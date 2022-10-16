@@ -75,3 +75,26 @@ exports.updateUserProfileValidation = () => {
       .withMessage('Your name cannot exceed 30 characters'),
   ];
 };
+
+exports.updateUserValidation = () => {
+  return [
+    body('email')
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage('Please enter your email')
+      .isEmail()
+      .withMessage('Email invalid'),
+    body('name')
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage('Please enter your name')
+      .isLength({ max: 30 })
+      .withMessage('Your name cannot exceed 30 characters'),
+    body('role')
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage('Please enter your role')
+      .isLength({ max: 30 })
+      .withMessage('Your role cannot exceed 30 characters'),
+  ];
+};
